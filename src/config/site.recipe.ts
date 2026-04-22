@@ -8,6 +8,7 @@ export const SITE_RECIPE: SiteRecipe = {
   footerTemplate: 'minimal-footer',
   motionPack: 'minimal',
   primaryTask: 'listing',
+  secondaryTask: 'classified',
   enabledTasks: ['listing'],
   taskTemplates: {
     listing: 'listing-showcase',

@@ -37,12 +37,8 @@ export default async function SearchPage({
       ? { fresh: true, category: category || undefined, task: task || undefined }
       : undefined
   );
-  const posts =
-    feed?.posts?.length
-      ? feed.posts
-      : useMaster
-        ? []
-        : SITE_CONFIG.tasks.flatMap((task) => getMockPostsForTask(task.key));
+  const fallbackPosts = SITE_CONFIG.tasks.flatMap((task) => getMockPostsForTask(task.key));
+  const posts = feed?.posts?.length ? feed.posts : fallbackPosts;
 
   const filtered = posts.filter((post) => {
     const content = post.content && typeof post.content === "object" ? post.content : {};

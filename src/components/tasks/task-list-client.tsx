@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import { TaskPostCard } from "@/components/shared/task-post-card";
 import { buildPostUrl } from "@/lib/task-data";
-import { normalizeCategory, isValidCategory } from "@/lib/categories";
+import { normalizeCategory } from "@/lib/categories";
 import type { TaskKey } from "@/lib/site-config";
 import type { SitePost } from "@/lib/site-connector";
 import { getLocalPostsForTask } from "@/lib/local-posts";
@@ -35,11 +35,7 @@ export function TaskListClient({ task, initialPosts, category }: Props) {
 
     const normalizedCategory = category ? normalizeCategory(category) : "all";
     if (normalizedCategory === "all") {
-      return combined.filter((post) => {
-        const content = post.content && typeof post.content === "object" ? post.content : {};
-        const value = typeof (content as any).category === "string" ? (content as any).category : "";
-        return !value || isValidCategory(value);
-      });
+      return combined;
     }
 
     return combined.filter((post) => {
