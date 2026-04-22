@@ -3,6 +3,7 @@ import { FileText, Building2, LayoutGrid, Tag, Github, Twitter, Linkedin, Image 
 import { SITE_CONFIG, type TaskKey } from '@/lib/site-config'
 import { siteContent } from '@/config/site.content'
 import { getFactoryState } from '@/design/factory/get-factory-state'
+import { getEmphasizedEnabledTasks, getSupplementalEnabledTasks } from '@/lib/emphasized-nav-tasks'
 import { FOOTER_OVERRIDE_ENABLED, FooterOverride } from '@/overrides/footer'
 
 const taskIcons: Record<TaskKey, any> = {
@@ -59,22 +60,72 @@ export function Footer() {
   const { recipe } = getFactoryState()
   const enabledTasks = SITE_CONFIG.tasks.filter((task) => task.enabled)
   const primaryTask = enabledTasks.find((task) => task.key === recipe.primaryTask) || enabledTasks[0]
+  const emphasizedFooterTasks = getEmphasizedEnabledTasks(recipe)
+  const footerExploreTasks = emphasizedFooterTasks.filter((task) => task.key !== 'listing')
+  const supplementalFooterTasks = getSupplementalEnabledTasks(recipe)
 
   if (recipe.footer === 'minimal-footer') {
     return (
-      <footer className="border-t border-[#d7deca] bg-[#f4f6ef] text-[#1f2617]">
-        <div className="mx-auto flex max-w-7xl flex-col gap-5 px-4 py-8 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
-          <div>
-            <p className="text-lg font-semibold">{SITE_CONFIG.name}</p>
-            <p className="mt-1 text-sm text-[#56604b]">{SITE_CONFIG.description}</p>
+      <footer className="border-t border-border bg-muted/40 text-foreground">
+        <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[1.2fr_0.9fr_1fr] lg:px-8">
+          <div className="max-w-md">
+            <Link href="/" className="inline-flex items-center gap-2">
+              <span className="text-lg font-semibold tracking-tight">{SITE_CONFIG.name}</span>
+            </Link>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{SITE_CONFIG.description}</p>
           </div>
-          <div className="flex flex-wrap gap-3">
-            {enabledTasks.slice(0, 5).map((task) => (
-              <Link key={task.key} href={task.route} className="rounded-lg border border-[#d7deca] bg-white px-3 py-2 text-sm font-medium text-[#1f2617] hover:bg-[#ebefdf]">
-                {task.label}
+          <div className="flex flex-col gap-4">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">Company</p>
+            <div className="flex flex-wrap gap-2">
+              <Link
+                href="/about"
+                className="rounded-full border border-primary/30 bg-primary/10 px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/15"
+              >
+                About
               </Link>
-            ))}
+            </div>
+            <ul className="mt-1 space-y-1 text-sm text-muted-foreground">
+              <li><Link href="/privacy" className="hover:text-foreground">Privacy</Link></li>
+              <li><Link href="/terms" className="hover:text-foreground">Terms</Link></li>
+            </ul>
           </div>
+          <div className="flex flex-col gap-4">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">Explore</p>
+            <div className="flex flex-wrap gap-2">
+              {footerExploreTasks.map((task) => (
+                <Link
+                  key={task.key}
+                  href={task.route}
+                  className="rounded-full border border-border bg-card px-4 py-2 text-sm font-semibold text-foreground shadow-sm hover:bg-secondary/80"
+                >
+                  {task.label}
+                </Link>
+              ))}
+              <Link
+                href="/search"
+                className="rounded-full border border-dashed border-primary/35 bg-primary/5 px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/10"
+              >
+                Search
+              </Link>
+            </div>
+            {supplementalFooterTasks.length ? (
+              <div className="mt-2 border-t border-border pt-4">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">More routes</p>
+                <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
+                  {supplementalFooterTasks.map((task) => (
+                    <li key={task.key}>
+                      <Link href={task.route} className="hover:text-foreground">
+                        {task.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+          </div>
+        </div>
+        <div className="border-t border-border py-4 text-center text-xs text-muted-foreground">
+          &copy; {new Date().getFullYear()} {SITE_CONFIG.name}
         </div>
       </footer>
     )
@@ -87,8 +138,8 @@ export function Footer() {
           <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr_1fr]">
             <div className="rounded-[2rem] border border-white/10 bg-white/5 p-7">
               <div className="flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/12 bg-white/8 p-1.5">
-                  <img src="/favicon.png?v=20260401" alt={`${SITE_CONFIG.name} logo`} width="48" height="48" className="h-full w-full object-contain" />
+                <div className="flex h-12 w-12 items-center justify-center overflow-hidden sm:h-14 sm:w-14">
+                  <img src="/favicon.png?v=20260422" alt={`${SITE_CONFIG.name} logo`} width="56" height="56" className="h-full w-full object-contain" />
                 </div>
                 <div>
                   <p className="text-lg font-semibold">{SITE_CONFIG.name}</p>
@@ -179,8 +230,8 @@ export function Footer() {
         <div className="grid gap-10 md:grid-cols-[1.2fr_0.8fr_0.8fr_0.8fr_0.8fr]">
           <div>
             <Link href="/" className="flex items-center gap-3">
-              <div className="h-11 w-11 overflow-hidden rounded-2xl border border-slate-200 bg-white p-1 shadow-sm">
-                <img src="/favicon.png?v=20260401" alt={`${SITE_CONFIG.name} logo`} width="44" height="44" className="h-full w-full object-contain" />
+              <div className="h-12 w-12 overflow-hidden sm:h-14 sm:w-14">
+                <img src="/favicon.png?v=20260422" alt={`${SITE_CONFIG.name} logo`} width="56" height="56" className="h-full w-full object-contain" />
               </div>
               <div>
                 <span className="block text-lg font-semibold">{SITE_CONFIG.name}</span>

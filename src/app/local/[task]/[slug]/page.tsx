@@ -132,6 +132,7 @@ export default function LocalPostDetailPage() {
   const images = getImageUrls(post, content);
   const isArticle = task === "article";
   const isPdf = task === "pdf";
+  const hideWebsiteOption = task === "profile" || task === "pdf" || task === "listing";
   const mapEmbedUrl = buildMapEmbedUrl(content.latitude, content.longitude, location);
 
   return (
@@ -201,7 +202,7 @@ export default function LocalPostDetailPage() {
               <div className="rounded-2xl border border-border bg-card p-5">
                 <h2 className="text-base font-semibold text-foreground">Details</h2>
                 <div className="mt-4 space-y-3 text-sm text-muted-foreground">
-                  {content.website ? (
+                  {!hideWebsiteOption && content.website ? (
                     <div className="flex items-start gap-2">
                       <Globe className="mt-0.5 h-4 w-4" />
                       <a

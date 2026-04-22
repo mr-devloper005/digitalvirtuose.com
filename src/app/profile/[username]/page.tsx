@@ -4,7 +4,6 @@ import { Footer } from "@/components/shared/footer";
 import { NavbarShell } from "@/components/shared/navbar-shell";
 import { ContentImage } from "@/components/shared/content-image";
 import { TaskPostCard } from "@/components/shared/task-post-card";
-import { Button } from "@/components/ui/button";
 import { SchemaJsonLd } from "@/components/seo/schema-jsonld";
 import { buildPostUrl } from "@/lib/task-data";
 import { buildPostMetadata, buildTaskMetadata } from "@/lib/seo";
@@ -72,8 +71,6 @@ export default async function ProfileDetailPage({ params }: { params: Promise<{ 
     (content.companyName as string | undefined) ||
     (content.name as string | undefined) ||
     post.title;
-  const website = content.website as string | undefined;
-  const domain = website ? website.replace(/^https?:\/\//, "").replace(/\/.*$/, "") : undefined;
   const description =
     (content.description as string | undefined) ||
     post.summary ||
@@ -126,22 +123,10 @@ export default async function ProfileDetailPage({ params }: { params: Promise<{ 
             </div>
             <div>
               <h1 className="text-3xl font-bold text-foreground sm:text-4xl">{brandName}</h1>
-              {domain ? (
-                <p className="mt-1 text-sm font-medium text-muted-foreground">{domain}</p>
-              ) : null}
               <article
                 className="article-content prose prose-slate mt-6 max-w-2xl text-base leading-relaxed prose-p:my-4 prose-a:text-primary prose-a:underline prose-strong:font-semibold"
                 dangerouslySetInnerHTML={{ __html: descriptionHtml }}
               />
-              {website ? (
-                <div className="mt-8">
-                  <Button asChild size="lg" className="px-7 text-base">
-                    <Link href={website} target="_blank" rel="noopener noreferrer">
-                      Visit Official Site
-                    </Link>
-                  </Button>
-                </div>
-              ) : null}
             </div>
           </div>
         </section>

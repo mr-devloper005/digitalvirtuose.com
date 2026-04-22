@@ -20,6 +20,7 @@ export type SiteRecipe = {
   footerTemplate?: FooterLayoutKey
   motionPack?: MotionPackKey
   primaryTask: TaskKey
+  secondaryTask?: TaskKey
   enabledTasks: TaskKey[]
   taskTemplates: Partial<Record<TaskKey, TaskLayoutKey>>
   manualOverrides: {

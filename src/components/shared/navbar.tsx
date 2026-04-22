@@ -4,13 +4,14 @@ import { useMemo, useState } from 'react'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Search, Menu, X, User, FileText, Building2, LayoutGrid, Tag, Image as ImageIcon, ChevronRight, Sparkles, MapPin, Plus } from 'lucide-react'
+import { Search, Menu, X, User, FileText, Building2, LayoutGrid, Tag, Image as ImageIcon, ChevronRight, Sparkles, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/lib/auth-context'
 import { SITE_CONFIG, type TaskKey } from '@/lib/site-config'
 import { cn } from '@/lib/utils'
 import { siteContent } from '@/config/site.content'
 import { getFactoryState } from '@/design/factory/get-factory-state'
+import { getEmphasizedEnabledTasks, getSupplementalEnabledTasks } from '@/lib/emphasized-nav-tasks'
 import { NAVBAR_OVERRIDE_ENABLED, NavbarOverride } from '@/overrides/navbar'
 
 const NavbarAuthControls = dynamic(() => import('@/components/shared/navbar-auth-controls').then((mod) => mod.NavbarAuthControls), {
@@ -68,22 +69,22 @@ const variantClasses = {
 
 const directoryPalette = {
   'directory-clean': {
-    shell: 'border-b border-slate-200 bg-white/94 text-slate-950 shadow-[0_1px_0_rgba(15,23,42,0.04)] backdrop-blur-xl',
-    logo: 'rounded-2xl border border-slate-200 bg-slate-50',
-    nav: 'text-slate-600 hover:text-slate-950',
-    search: 'border border-slate-200 bg-slate-50 text-slate-600',
-    cta: 'bg-slate-950 text-white hover:bg-slate-800',
-    post: 'border border-slate-200 bg-white text-slate-950 hover:bg-slate-50',
-    mobile: 'border-t border-slate-200 bg-white',
+    shell: 'border-b border-border/80 bg-card/90 text-foreground shadow-[0_1px_0_rgba(40,90,72,0.06)] backdrop-blur-xl',
+    logo: 'rounded-2xl border border-border bg-background shadow-sm',
+    nav: 'text-muted-foreground hover:text-foreground',
+    search: 'border border-border bg-muted/80 text-muted-foreground',
+    cta: 'bg-primary text-primary-foreground hover:bg-primary/90 transition-colors',
+    post: 'border border-border bg-secondary/60 text-foreground hover:bg-secondary',
+    mobile: 'border-t border-border bg-card/95',
   },
   'market-utility': {
-    shell: 'border-b border-[#d7deca] bg-[#f4f6ef]/96 text-[#1f2617] shadow-[0_1px_0_rgba(64,76,34,0.06)] backdrop-blur-xl',
-    logo: 'rounded-xl border border-[#d7deca] bg-white',
-    nav: 'text-[#56604b] hover:text-[#1f2617]',
-    search: 'border border-[#d7deca] bg-white text-[#56604b]',
-    cta: 'bg-[#1f2617] text-[#edf5dc] hover:bg-[#2f3a24]',
-    post: 'border border-[#d7deca] bg-white text-[#1f2617] hover:bg-[#eef2e4]',
-    mobile: 'border-t border-[#d7deca] bg-[#f4f6ef]',
+    shell: 'border-b border-border/80 bg-card/90 text-foreground shadow-[0_1px_0_rgba(40,90,72,0.06)] backdrop-blur-xl',
+    logo: 'rounded-xl border border-border bg-background shadow-sm',
+    nav: 'text-muted-foreground hover:text-foreground',
+    search: 'border border-border bg-muted/80 text-muted-foreground',
+    cta: 'bg-primary text-primary-foreground hover:bg-primary/90 transition-colors',
+    post: 'border border-border bg-secondary/60 text-foreground hover:bg-secondary',
+    mobile: 'border-t border-border bg-card/95',
   },
 } as const
 
@@ -98,74 +99,88 @@ export function Navbar() {
   const { recipe } = getFactoryState()
 
   const navigation = useMemo(() => SITE_CONFIG.tasks.filter((task) => task.enabled && task.key !== 'profile'), [])
-  const primaryNavigation = navigation.slice(0, 5)
+  const emphasizedNavigation = useMemo(() => getEmphasizedEnabledTasks(recipe), [recipe.primaryTask, recipe.secondaryTask])
+  const supplementalNavigation = useMemo(() => getSupplementalEnabledTasks(recipe).filter((t) => t.key !== 'profile'), [recipe.primaryTask, recipe.secondaryTask])
+  const isDirectoryProduct = recipe.homeLayout === 'listing-home' || recipe.homeLayout === 'classified-home'
+  const primaryNavigation = emphasizedNavigation.length
+    ? emphasizedNavigation
+    : isDirectoryProduct
+      ? navigation.slice(0, 2)
+      : navigation.slice(0, 5)
   const mobileNavigation = navigation.map((task) => ({
     name: task.label,
     href: task.route,
     icon: taskIcons[task.key] || LayoutGrid,
   }))
+  const supplementalMobile = supplementalNavigation.map((task) => ({
+    name: task.label,
+    href: task.route,
+    icon: taskIcons[task.key] || LayoutGrid,
+  }))
   const primaryTask = SITE_CONFIG.tasks.find((task) => task.key === recipe.primaryTask && task.enabled) || primaryNavigation[0]
-  const isDirectoryProduct = recipe.homeLayout === 'listing-home' || recipe.homeLayout === 'classified-home'
 
   if (isDirectoryProduct) {
     const palette = directoryPalette[(recipe.brandPack === 'market-utility' ? 'market-utility' : 'directory-clean') as keyof typeof directoryPalette]
+    const directoryPrimaryNavigation = primaryNavigation.filter((task) => task.key !== 'listing')
 
     return (
       <header className={cn('sticky top-0 z-50 w-full', palette.shell)}>
-        <nav className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-          <div className="flex min-w-0 items-center gap-4">
+        <nav className="mx-auto flex h-[4.25rem] max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+          <div className="flex min-w-0 shrink-0 items-center gap-3 lg:gap-4">
             <Link href="/" className="flex shrink-0 items-center gap-3">
-              <div className={cn('flex h-12 w-12 items-center justify-center overflow-hidden p-1.5', palette.logo)}>
-                <img src="/favicon.png?v=20260401" alt={`${SITE_CONFIG.name} logo`} width="48" height="48" className="h-full w-full object-contain" />
+              <div className="flex h-12 w-12 items-center justify-center overflow-hidden sm:h-14 sm:w-14">
+                <img src="/favicon.png?v=20260422" alt={`${SITE_CONFIG.name} logo`} width="56" height="56" className="h-full w-full object-contain" />
               </div>
               <div className="min-w-0 hidden sm:block">
-                <span className="block truncate text-xl font-semibold">{SITE_CONFIG.name}</span>
-                <span className="block text-[10px] uppercase tracking-[0.24em] opacity-60">{siteContent.navbar.tagline}</span>
+                <span className="block truncate text-lg font-semibold tracking-tight sm:text-xl">{SITE_CONFIG.name}</span>
+                <span className="block text-[10px] uppercase tracking-[0.22em] text-muted-foreground">{siteContent.navbar.tagline}</span>
               </div>
             </Link>
-
-            <div className="hidden items-center gap-5 xl:flex">
-              {primaryNavigation.slice(0, 4).map((task) => {
-                const isActive = pathname.startsWith(task.route)
-                return (
-                  <Link key={task.key} href={task.route} className={cn('text-sm font-semibold transition-colors', isActive ? 'text-foreground' : palette.nav)}>
-                    {task.label}
-                  </Link>
-                )
-              })}
-            </div>
           </div>
 
-          <div className="hidden min-w-0 flex-1 items-center justify-center lg:flex">
-            <div className={cn('flex w-full max-w-xl items-center gap-3 rounded-full px-4 py-3', palette.search)}>
-              <Search className="h-4 w-4" />
-              <span className="text-sm">Find businesses, spaces, and local services</span>
-              <div className="ml-auto hidden items-center gap-1 text-xs opacity-75 md:flex">
-                <MapPin className="h-3.5 w-3.5" />
-                Local discovery
+          {directoryPrimaryNavigation.length ? (
+            <div className="hidden min-w-0 flex-1 items-center justify-center px-4 lg:flex">
+              <div className="flex items-center gap-1 rounded-full border border-border bg-muted/50 p-1">
+                {directoryPrimaryNavigation.map((task) => {
+                  const isActive = pathname.startsWith(task.route)
+                  return (
+                    <Link
+                      key={task.key}
+                      href={task.route}
+                      className={cn(
+                        'rounded-full px-4 py-2 text-sm font-semibold transition-colors',
+                        isActive ? 'bg-primary text-primary-foreground shadow-sm' : palette.nav,
+                      )}
+                    >
+                      {task.label}
+                    </Link>
+                  )
+                })}
               </div>
             </div>
+          ) : null}
+
+          <div className="hidden min-w-0 flex-1 items-center justify-center lg:flex lg:max-w-md">
+            <Button variant="ghost" size="sm" asChild className={cn('h-11 w-full max-w-sm justify-start gap-3 rounded-full px-4 font-normal', palette.search)}>
+              <Link href="/search">
+                <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
+                <span className="truncate text-sm text-muted-foreground">Search businesses &amp; categories</span>
+              </Link>
+            </Button>
           </div>
 
           <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-            {primaryTask ? (
-              <Link href={primaryTask.route} className="hidden items-center gap-2 rounded-full border border-current/10 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] opacity-75 md:inline-flex">
-                <Sparkles className="h-3.5 w-3.5" />
-                {primaryTask.label}
-              </Link>
-            ) : null}
-
             {isAuthenticated ? (
               <NavbarAuthControls />
             ) : (
               <div className="hidden items-center gap-2 md:flex">
-                <Button variant="ghost" size="sm" asChild className="rounded-full px-4">
+                <Button variant="ghost" size="sm" asChild className="rounded-full px-4 text-muted-foreground hover:text-foreground">
                   <Link href="/login">Sign In</Link>
                 </Button>
-                <Button size="sm" asChild className={cn('rounded-full', palette.cta)}>
+                <Button size="sm" asChild className={cn('rounded-full px-4 shadow-sm', palette.cta)}>
                   <Link href="/register">
                     <Plus className="mr-1 h-4 w-4" />
-                    Add Listing
+                    List a business
                   </Link>
                 </Button>
               </div>
@@ -180,19 +195,49 @@ export function Navbar() {
         {isMobileMenuOpen && (
           <div className={palette.mobile}>
             <div className="space-y-2 px-4 py-4">
-              <div className={cn('mb-3 flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium', palette.search)}>
-                <Search className="h-4 w-4" />
-                Find businesses, spaces, and services
-              </div>
-              {mobileNavigation.map((item) => {
-                const isActive = pathname.startsWith(item.href)
+              <Link
+                href="/search"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={cn('mb-2 flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium', palette.search)}
+              >
+                <Search className="h-4 w-4 shrink-0" />
+                Search the directory
+              </Link>
+              {directoryPrimaryNavigation.length ? <p className="px-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">Main</p> : null}
+              {directoryPrimaryNavigation.map((task) => {
+                const NavIcon = taskIcons[task.key as TaskKey] || LayoutGrid
+                const isActive = pathname.startsWith(task.route)
                 return (
-                  <Link key={item.name} href={item.href} onClick={() => setIsMobileMenuOpen(false)} className={cn('flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold transition-colors', isActive ? 'bg-foreground text-background' : palette.post)}>
-                    <item.icon className="h-5 w-5" />
-                    {item.name}
+                  <Link
+                    key={task.key}
+                    href={task.route}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={cn('flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold transition-colors', isActive ? 'bg-primary text-primary-foreground' : palette.post)}
+                  >
+                    <NavIcon className="h-5 w-5" />
+                    {task.label}
                   </Link>
                 )
               })}
+              {supplementalMobile.length ? (
+                <>
+                  <p className="mt-3 px-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">More on this site</p>
+                  {supplementalMobile.map((item) => {
+                    const isActive = pathname.startsWith(item.href)
+                    return (
+                      <Link
+                        key={item.name}
+                        href={item.href}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className={cn('flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium opacity-90 transition-colors', isActive ? 'bg-primary/15 text-foreground' : palette.post)}
+                      >
+                        <item.icon className="h-5 w-5" />
+                        {item.name}
+                      </Link>
+                    )
+                  })}
+                </>
+              ) : null}
             </div>
           </div>
         )}
@@ -210,8 +255,8 @@ export function Navbar() {
       <nav className={cn('mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8', isFloating ? 'h-24 pt-4' : 'h-20')}>
         <div className="flex min-w-0 flex-1 items-center gap-4 lg:gap-7">
           <Link href="/" className="flex shrink-0 items-center gap-3 whitespace-nowrap pr-2">
-            <div className={cn('flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden p-1.5', style.logo)}>
-              <img src="/favicon.png?v=20260401" alt={`${SITE_CONFIG.name} logo`} width="48" height="48" className="h-full w-full object-contain" />
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden sm:h-14 sm:w-14">
+              <img src="/favicon.png?v=20260422" alt={`${SITE_CONFIG.name} logo`} width="56" height="56" className="h-full w-full object-contain" />
             </div>
             <div className="min-w-0 hidden sm:block">
               <span className="block truncate text-xl font-semibold">{SITE_CONFIG.name}</span>

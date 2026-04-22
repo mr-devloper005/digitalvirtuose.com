@@ -164,6 +164,7 @@ export async function TaskDetailPage({ task, slug }: { task: TaskKey; slug: stri
     : "";
   const postTags = Array.isArray(post.tags) ? post.tags.filter((tag) => typeof tag === "string") : [];
   const location = content.address || content.location;
+  const hideWebsiteOption = task === "profile" || task === "pdf" || task === "listing";
   const images = getImageUrls(post, content);
   const mapEmbedUrl = buildMapEmbedUrl(content.latitude, content.longitude, location);
   const isBookmark = task === "sbm" || task === "social";
@@ -339,7 +340,7 @@ export async function TaskDetailPage({ task, slug }: { task: TaskKey; slug: stri
               <div className="mx-auto w-full max-w-4xl rounded-2xl border border-border bg-card p-6">
                 <h2 className="text-lg font-semibold text-foreground">Business details</h2>
                 <div className="mt-4 space-y-3 text-sm text-muted-foreground">
-                  {content.website && (
+                  {!hideWebsiteOption && content.website && (
                     <div className="flex items-start gap-2">
                       <Globe className="mt-0.5 h-4 w-4" />
                       <a
@@ -411,7 +412,7 @@ export async function TaskDetailPage({ task, slug }: { task: TaskKey; slug: stri
             <div className="rounded-2xl border border-border bg-card p-6">
               <h2 className="text-lg font-semibold text-foreground">Listing details</h2>
                 <div className="mt-4 space-y-3 text-sm text-muted-foreground">
-                  {content.website && (
+                  {!hideWebsiteOption && content.website && (
                     <div className="flex items-start gap-2">
                       <Globe className="mt-0.5 h-4 w-4" />
                       <a
@@ -448,7 +449,7 @@ export async function TaskDetailPage({ task, slug }: { task: TaskKey; slug: stri
                     </div>
                   )}
                 </div>
-              {content.website ? (
+              {!hideWebsiteOption && content.website ? (
                 <Button className="mt-5 w-full" asChild>
                   <a href={content.website} target="_blank" rel="noreferrer">
                     Visit Website

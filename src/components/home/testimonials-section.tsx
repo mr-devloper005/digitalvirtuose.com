@@ -8,14 +8,14 @@ import { mockTestimonials } from '@/data/mock-data'
 
 export function TestimonialsSection() {
   return (
-    <section className="border-b border-border py-16">
+    <section className="border-b border-border bg-muted/20 py-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-10 text-center">
           <h2 className="text-2xl font-bold text-foreground sm:text-3xl">
-            What Our Users Say
+            Operators on the directory
           </h2>
           <p className="mt-2 text-muted-foreground">
-            Trusted by thousands of creators and businesses
+            How teams describe listing on a surface built for credible discovery
           </p>
         </div>
 
@@ -49,7 +49,7 @@ export function TestimonialsSection() {
                     </div>
                     <div className="flex">
                       {Array.from({ length: testimonial.rating }).map((_, i) => (
-                        <Star key={i} className="h-4 w-4 fill-yellow-500 text-yellow-500" />
+                        <Star key={i} className="h-4 w-4 fill-primary text-primary" />
                       ))}
                     </div>
                   </div>
