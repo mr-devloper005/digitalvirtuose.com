@@ -115,47 +115,44 @@ export function TaskPostCard({
   const isDirectorySurface = isDirectoryProduct && (variant === 'listing' || variant === 'classified' || variant === 'profile')
 
   if (isDirectorySurface) {
-    const cardTone = recipe.brandPack === 'market-utility'
-      ? {
-          frame: 'rounded-[1.75rem] border border-[#d7deca] bg-white shadow-[0_18px_44px_rgba(64,76,34,0.08)] hover:-translate-y-1 hover:shadow-[0_22px_50px_rgba(64,76,34,0.14)]',
-          badge: 'bg-[#1f2617] text-[#edf5dc]',
-          muted: 'text-[#5b664c]',
-          title: 'text-[#1f2617]',
-          cta: 'text-[#1f2617]',
-        }
-      : {
-          frame: 'rounded-[1.75rem] border border-slate-200 bg-white shadow-[0_18px_44px_rgba(15,23,42,0.08)] hover:-translate-y-1 hover:shadow-[0_22px_50px_rgba(15,23,42,0.14)]',
-          badge: 'bg-slate-950 text-white',
-          muted: 'text-slate-600',
-          title: 'text-slate-950',
-          cta: 'text-slate-950',
-        }
+    const cardTone = {
+      frame: 'rounded-2xl border border-border bg-card shadow-[0_16px_48px_rgba(9,20,19,0.07)] hover:-translate-y-1 hover:shadow-[0_22px_56px_rgba(9,20,19,0.11)] transition-all duration-300',
+      badge: 'bg-primary text-primary-foreground',
+      muted: 'text-muted-foreground',
+      title: 'text-foreground',
+      cta: 'text-primary',
+      chip: 'bg-secondary text-muted-foreground',
+    }
 
     return (
-      <Link href={href} className={`group flex h-full flex-col overflow-hidden transition duration-300 ${cardTone.frame}`}>
-        <div className="relative aspect-[16/11] overflow-hidden bg-slate-100">
-          <ContentImage src={image} alt={altText} fill sizes={imageSizes} quality={75} className="object-cover transition-transform duration-500 group-hover:scale-[1.04]" intrinsicWidth={960} intrinsicHeight={720} />
+      <Link href={href} className={`group flex h-full flex-col overflow-hidden ${cardTone.frame}`}>
+        <div className="relative aspect-[16/11] overflow-hidden bg-muted">
+          <ContentImage src={image} alt={altText} fill sizes={imageSizes} quality={75} className="object-cover transition-transform duration-500 group-hover:scale-[1.05]" intrinsicWidth={960} intrinsicHeight={720} />
+          <div className="absolute inset-0 bg-gradient-to-t from-background/85 via-transparent to-transparent" />
           <div className="absolute inset-x-0 top-0 flex items-center justify-between p-4">
-            <span className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] ${cardTone.badge}`}>
+            <span className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] ${cardTone.badge} shadow-sm`}>
               <Tag className="h-3.5 w-3.5" />
               {category}
             </span>
-            <span className="rounded-full bg-white/85 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-900">
-              {variant === 'classified' ? 'Open now' : 'Verified'}
+            <span className="rounded-full border border-border bg-card/95 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-foreground shadow-sm backdrop-blur-sm">
+              {variant === 'classified' ? 'Offer' : 'Listed'}
             </span>
           </div>
         </div>
-        <div className="flex flex-1 flex-col p-5">
-          <div className="flex items-center justify-between gap-3">
-            <h3 className={`line-clamp-2 text-xl font-semibold leading-snug ${cardTone.title}`}>{post.title}</h3>
-            <ArrowUpRight className={`h-5 w-5 shrink-0 ${cardTone.muted}`} />
+        <div className="flex flex-1 flex-col p-6">
+          <div className="flex items-start justify-between gap-3">
+            <h3 className={`line-clamp-2 text-xl font-bold leading-snug ${cardTone.title}`}>{post.title}</h3>
+            <ArrowUpRight className={`h-5 w-5 shrink-0 mt-1 ${cardTone.muted} group-hover:text-primary transition-colors`} />
           </div>
-          <p className={`mt-3 line-clamp-3 text-sm leading-7 ${cardTone.muted}`}>{getExcerpt(content.description || post.summary) || 'Explore this local listing.'}</p>
-          <div className="mt-5 flex flex-wrap gap-3 text-xs">
-            {content.location ? <span className={`inline-flex items-center gap-1 ${cardTone.muted}`}><MapPin className="h-3.5 w-3.5" />{content.location}</span> : null}
-            {content.email ? <span className={`inline-flex items-center gap-1 ${cardTone.muted}`}><Mail className="h-3.5 w-3.5" />{content.email}</span> : null}
+          <p className={`mt-4 line-clamp-3 text-sm leading-7 ${cardTone.muted}`}>{getExcerpt(content.description || post.summary) || 'Discover this business listing.'}</p>
+          <div className="mt-6 flex flex-wrap gap-3 text-xs">
+            {content.location ? <span className={`inline-flex items-center gap-1.5 rounded-full px-2 py-1 ${cardTone.chip}`}><MapPin className="h-3.5 w-3.5" />{content.location}</span> : null}
+            {content.email ? <span className={`inline-flex items-center gap-1.5 rounded-full px-2 py-1 ${cardTone.chip}`}><Mail className="h-3.5 w-3.5" />{content.email}</span> : null}
           </div>
-          <div className={`mt-auto pt-5 text-sm font-semibold ${cardTone.cta}`}>{variant === 'classified' ? 'View offer' : 'View details'}</div>
+          <div className={`mt-auto pt-6 text-sm font-semibold ${cardTone.cta} flex items-center gap-2`}>
+            {variant === 'classified' ? 'View offer' : 'View listing'}
+            <ArrowUpRight className="h-4 w-4" />
+          </div>
         </div>
       </Link>
     )

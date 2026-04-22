@@ -1,7 +1,6 @@
 import { SITE_CONFIG, type TaskKey } from "./site-config";
 import { fetchSiteFeed, type SiteFeed, type SitePost } from "./site-connector";
 import { getMockPostsForTask } from "./mock-posts";
-import { isValidCategory } from "./categories";
 
 const getTaskContentType = (task: TaskKey) =>
   SITE_CONFIG.tasks.find((item) => item.key === task)?.contentType || task;
@@ -30,7 +29,7 @@ export const fetchTaskPosts = async (
   limit = 8,
   options?: { allowMockFallback?: boolean; fresh?: boolean }
 ) => {
-  const allowMockFallback = options?.allowMockFallback ?? process.env.NEXT_PUBLIC_USE_MOCK_CONTENT === "true";
+  const allowMockFallback = options?.allowMockFallback ?? true;
   const type = getTaskContentType(task);
   const pickTaskPosts = (feed: SiteFeed<SitePost> | null) => {
     if (!feed) return [];
@@ -42,9 +41,7 @@ export const fetchTaskPosts = async (
             : "";
         if (status && status !== "PUBLISHED") return false;
         if (getPostType(post) !== type) return false;
-        const content = post.content && typeof post.content === "object" ? post.content : {};
-        const category = typeof (content as any).category === "string" ? (content as any).category : "";
-        return !category || isValidCategory(category);
+        return true;
       })
       .slice(0, limit);
   };
@@ -65,7 +62,7 @@ export const fetchTaskPosts = async (
 };
 
 export const fetchTaskPostBySlug = async (task: TaskKey, slug: string) => {
-  const allowMockFallback = process.env.NEXT_PUBLIC_USE_MOCK_CONTENT === "true";
+  const allowMockFallback = true;
   const type = getTaskContentType(task);
   const resolveFromFeed = (feed: SiteFeed<SitePost> | null) =>
     feed?.posts.find((post) => post.slug === slug && getPostType(post) === type) || null;

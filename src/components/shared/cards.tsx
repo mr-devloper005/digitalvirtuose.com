@@ -174,7 +174,7 @@ export function ListingCard({ listing }: { listing: Listing }) {
                 {listing.category}
               </Badge>
               <div className="flex items-center gap-1">
-                <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" />
+                <Star className="h-4 w-4 fill-primary text-primary" />
                 <span className="text-sm font-medium">{listing.rating}</span>
                 <span className="text-xs text-muted-foreground">({listing.reviewsCount})</span>
               </div>
@@ -215,7 +215,7 @@ export function ClassifiedAdCard({ ad }: { ad: ClassifiedAd }) {
   const conditionColors = {
     'new': 'bg-green-500/10 text-green-500',
     'like-new': 'bg-blue-500/10 text-blue-500',
-    'good': 'bg-yellow-500/10 text-yellow-500',
+    'good': 'bg-primary/10 text-primary',
     'fair': 'bg-orange-500/10 text-orange-500',
     'poor': 'bg-red-500/10 text-red-500',
   }

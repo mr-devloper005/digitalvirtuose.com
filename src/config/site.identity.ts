@@ -1,10 +1,10 @@
 export const siteIdentity = {
   code: process.env.NEXT_PUBLIC_SITE_CODE || 'uq3jnkf9yb',
   name: process.env.NEXT_PUBLIC_SITE_NAME || 'Digitalvirtuose',
-  tagline: process.env.NEXT_PUBLIC_SITE_TAGLINE || 'Listing platform',
+  tagline: process.env.NEXT_PUBLIC_SITE_TAGLINE || 'Premium business listings',
   description:
     process.env.NEXT_PUBLIC_SITE_DESCRIPTION ||
-    'A listing site for Digitalvirtuose, built for clean discovery and structured publishing.',
+    'Digitalvirtuose is a premium business listing directory—clear discovery, strong trust cues, and search-friendly presentation.',
   domain: process.env.NEXT_PUBLIC_SITE_DOMAIN || 'digitalvirtuose.com',
   url: process.env.NEXT_PUBLIC_SITE_URL || 'https://digitalvirtuose.com',
   ogImage: process.env.NEXT_PUBLIC_SITE_OG_IMAGE || '/og-default.png',

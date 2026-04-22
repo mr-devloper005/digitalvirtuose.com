@@ -37,6 +37,8 @@ export type SiteFactoryRecipe = {
   homeLayout: HomeLayoutKey
   motionPack: MotionPackKey
   primaryTask: TaskKey
+  /** Optional second task to emphasize in nav/home alongside primary. */
+  secondaryTask?: TaskKey
   enabledTasks: TaskKey[]
   taskLayouts: Partial<Record<TaskKey, TaskLayoutKey>>
 }
