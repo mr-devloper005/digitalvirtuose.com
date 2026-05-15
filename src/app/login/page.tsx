@@ -14,11 +14,11 @@ import { LOGIN_PAGE_OVERRIDE_ENABLED, LoginPageOverride } from '@/overrides/logi
 function getLoginConfig(kind: ReturnType<typeof getProductKind>) {
   if (kind === 'directory') {
     return {
-      shell: 'bg-[#f8fbff] text-slate-950',
-      panel: 'border border-slate-200 bg-white',
-      side: 'border border-slate-200 bg-slate-50',
-      muted: 'text-slate-600',
-      action: 'bg-slate-950 text-white hover:bg-slate-800',
+      shell: 'bg-background text-foreground',
+      panel: 'border border-border bg-card shadow-[0_20px_60px_rgba(9,20,19,0.08)]',
+      side: 'border border-border bg-secondary/40 shadow-[0_20px_60px_rgba(9,20,19,0.05)]',
+      muted: 'text-muted-foreground',
+      action: 'bg-primary text-primary-foreground hover:bg-primary/90',
       icon: Building2,
       title: 'Access your business dashboard',
       body: 'Manage listings, verification details, contact info, and local discovery surfaces from one place.',
@@ -81,9 +81,13 @@ export default function LoginPage() {
   }
 
   return (
-    <div className={`min-h-screen ${config.shell}`}>
+    <div className={`relative min-h-screen overflow-hidden ${config.shell}`}>
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_85%_55%_at_50%_-10%,rgba(176,228,204,0.35),transparent_55%),linear-gradient(180deg,rgba(244,250,247,0.7)_0%,transparent_40%)]"
+      />
       <NavbarShell />
-      <main className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+      <main className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
         <section className="grid gap-8 lg:grid-cols-[0.88fr_1.12fr] lg:items-stretch">
           <div className={`rounded-[2rem] p-8 ${config.side}`}>
             <Icon className="h-8 w-8" />
@@ -91,7 +95,7 @@ export default function LoginPage() {
             <p className={`mt-5 text-sm leading-8 ${config.muted}`}>{config.body}</p>
             <div className="mt-8 grid gap-4">
               {['Cleaner product-specific workflows', 'Palette and layout matched to the site family', 'Fewer repeated admin patterns'].map((item) => (
-                <div key={item} className="rounded-[1.5rem] border border-current/10 px-4 py-4 text-sm">{item}</div>
+                <div key={item} className="rounded-[1.5rem] border border-border/80 bg-background/50 px-4 py-4 text-sm">{item}</div>
               ))}
             </div>
           </div>
@@ -100,7 +104,7 @@ export default function LoginPage() {
             <p className="text-xs font-semibold uppercase tracking-[0.24em] opacity-70">Welcome back</p>
             <form className="mt-6 grid gap-4" onSubmit={handleLogin}>
               <input
-                className="h-12 rounded-xl border border-current/10 bg-transparent px-4 text-sm"
+                className="h-12 rounded-xl border border-border bg-background/70 px-4 text-sm"
                 placeholder="Email address"
                 type="email"
                 value={email}
@@ -108,7 +112,7 @@ export default function LoginPage() {
                 required
               />
               <input
-                className="h-12 rounded-xl border border-current/10 bg-transparent px-4 text-sm"
+                className="h-12 rounded-xl border border-border bg-background/70 px-4 text-sm"
                 placeholder="Password"
                 type="password"
                 value={password}

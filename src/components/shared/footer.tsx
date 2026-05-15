@@ -31,6 +31,7 @@ const footerLinks = {
     { name: 'Careers', href: '/careers' },
     { name: 'Blog', href: '/blog' },
     { name: 'Press', href: '/press' },
+    { name: 'Contact', href: '/contact' },
   ],
   resources: [
     { name: 'Help Center', href: '/help' },
@@ -39,8 +40,6 @@ const footerLinks = {
     { name: 'Status', href: '/status' },
   ],
   legal: [
-    { name: 'Privacy', href: '/privacy' },
-    { name: 'Terms', href: '/terms' },
     { name: 'Cookies', href: '/cookies' },
     { name: 'Licenses', href: '/licenses' },
   ],
@@ -84,10 +83,6 @@ export function Footer() {
                 About
               </Link>
             </div>
-            <ul className="mt-1 space-y-1 text-sm text-muted-foreground">
-              <li><Link href="/privacy" className="hover:text-foreground">Privacy</Link></li>
-              <li><Link href="/terms" className="hover:text-foreground">Terms</Link></li>
-            </ul>
           </div>
           <div className="flex flex-col gap-4">
             <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">Explore</p>
