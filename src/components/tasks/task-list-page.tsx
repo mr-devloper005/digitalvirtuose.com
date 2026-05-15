@@ -147,13 +147,26 @@ export async function TaskListPage({ task, category }: { task: TaskKey; category
 
         {layoutKey === 'listing-directory' || layoutKey === 'listing-showcase' ? (
           <section className="mb-14 border-b border-border pb-12">
-            <div className="grid gap-8 lg:grid-cols-1 lg:items-end">
+            <div className="grid gap-8 lg:grid-cols-[1fr_320px] lg:items-end">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.28em] text-primary">{taskConfig?.label || task}</p>
                 <h1 className="mt-4 max-w-3xl text-4xl font-bold tracking-tight text-foreground sm:text-5xl">{taskConfig?.description || 'Latest posts'}</h1>
                 <p className={`mt-5 max-w-2xl text-base leading-relaxed ${ui.muted}`}>
                   Directory-first layout: wide headings and tight metadata so visitors can scan like a serious marketplace.
                 </p>
+              </div>
+              <div className={`rounded-2xl p-6 ${ui.panel}`}>
+                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-primary">Category filter</p>
+                <p className={`mt-3 text-sm leading-7 ${ui.muted}`}>Narrow listings by category and apply instantly.</p>
+                <form className="mt-5 flex flex-col gap-3" action={taskConfig?.route || '#'} method="get">
+                  <select name="category" defaultValue={normalizedCategory} className={`h-11 w-full rounded-xl px-3 text-sm ${ui.input}`}>
+                    <option value="all">All categories</option>
+                    {CATEGORY_OPTIONS.map((item) => (
+                      <option key={item.slug} value={item.slug}>{item.name}</option>
+                    ))}
+                  </select>
+                  <button type="submit" className={`h-11 rounded-xl px-4 text-sm font-semibold ${ui.button}`}>Apply</button>
+                </form>
               </div>
             </div>
           </section>
