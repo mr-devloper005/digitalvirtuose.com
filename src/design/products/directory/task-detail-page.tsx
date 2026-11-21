@@ -53,9 +53,6 @@ export function DirectoryTaskDetailPage({
       : Array.isArray(rawHoursSource)
         ? rawHoursSource.filter((row): row is string => typeof row === 'string' && row.trim().length > 0)
         : []
-  const displayHours = hourRows.length
-    ? hourRows
-    : ['Monday - Friday: 9:00 AM - 6:00 PM', 'Saturday: 10:00 AM - 4:00 PM', 'Sunday: Closed']
   const schemaPayload = {
     '@context': 'https://schema.org',
     '@type': task === 'profile' ? 'Organization' : 'LocalBusiness',
@@ -162,17 +159,6 @@ export function DirectoryTaskDetailPage({
               </div>
             </div>
 
-            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_24px_60px_rgba(15,23,42,0.08)]">
-              <p className="text-sm font-semibold text-slate-900">Open Hours</p>
-              <ul className="mt-4 space-y-2 text-sm text-slate-600">
-                {displayHours.map((row) => (
-                  <li key={row} className="flex items-start gap-2">
-                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-slate-400" />
-                    <span>{row}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
 
             <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_24px_60px_rgba(15,23,42,0.08)]">
               <p className="text-sm font-semibold text-slate-900">Categories</p>
